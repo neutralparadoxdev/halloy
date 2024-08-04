@@ -262,7 +262,26 @@ impl Dashboard {
 
                 match event {
                     sidebar::Event::Open(kind) => {
-                        return (self.open_buffer(kind, config), None);
+
+                        let mut found_pane:Option<pane_grid::Pane> = None;
+                        
+                        // we look for the pane and close it if we find it
+                        for (ice_pane, pane) in self.panes.iter() {
+                            if let Buffer::Channel(channel) = &pane.buffer {
+                                if let Some(kind_channel) = kind.channel() {
+                                    if channel.channel == kind_channel  && channel.server  == *kind.server() {
+                                        found_pane = Some(ice_pane.clone());
+                                        break;
+                                    }
+                                }
+                            } 
+                        }
+                        
+                        if let Some(ice_pane) = found_pane {
+                            return (self.close_pane(ice_pane), None)
+                        } else {
+                            return (self.open_buffer(kind, config), None);
+                        }
                     }
                     sidebar::Event::Replace(kind, pane) => {
                         if let Some(state) = self.panes.get_mut(pane) {
