@@ -1,9 +1,15 @@
 # Unreleased
 
+# 2024.10 (2024-08-04)
+
 Added:
 
 - Small icon in sidemenu when a new release is available 
-- Enable support for IRCv3 `chghost`
+- Enable support for IRCv3 `chghost`, `account-notify`, and `extended-join`
+
+Removed:
+
+- Persistent window position and size due to an upstream bug
 
 # 2024.9 (2024-07-29)
 
