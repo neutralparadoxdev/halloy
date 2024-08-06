@@ -16,6 +16,7 @@ pub use self::proxy::Proxy;
 pub use self::server::Server;
 pub use self::sidebar::Sidebar;
 use crate::audio::{self, Sound};
+use crate::dashboard::DefaultAction;
 use crate::environment::config_dir;
 use crate::server::Map as ServerMap;
 use crate::theme::Palette;
@@ -179,6 +180,20 @@ impl Config {
         let loaded_notifications = notifications.load_sounds()?;
 
         let themes = Self::load_themes(&theme).unwrap_or_default();
+
+        let sidebar = {
+            let mut sidebar = sidebar;
+
+            sidebar.default_action = 
+                if pane_toggling {
+                    DefaultAction::TogglePane
+                } else {
+                    DefaultAction::NewPane
+                };
+
+            sidebar 
+        };
+
 
         Ok(Config {
             themes,

@@ -15,6 +15,7 @@ use crate::{icon, theme};
 #[derive(Debug, Clone)]
 pub enum Message {
     Open(Buffer),
+    ToggleBuffer(Buffer),
     Replace(Buffer, pane_grid::Pane),
     Close(pane_grid::Pane),
     Swap(pane_grid::Pane, pane_grid::Pane),
@@ -29,6 +30,7 @@ pub enum Message {
 pub enum Event {
     Open(Buffer),
     Replace(Buffer, pane_grid::Pane),
+    ToggleBuffer(Buffer),
     Close(pane_grid::Pane),
     Swap(pane_grid::Pane, pane_grid::Pane),
     Leave(Buffer),
@@ -60,6 +62,7 @@ impl Sidebar {
         match message {
             Message::Open(source) => Event::Open(source),
             Message::Replace(source, pane) => Event::Replace(source, pane),
+            Message::ToggleBuffer(source) => Event::ToggleBuffer(source),
             Message::Close(pane) => Event::Close(pane),
             Message::Swap(from, to) => Event::Swap(from, to),
             Message::Leave(buffer) => Event::Leave(buffer),
@@ -356,6 +359,7 @@ fn buffer_button<'a>(
             theme::button::side_menu
         })
         .on_press(match default_action {
+            DefaultAction::TogglePane => Message::ToggleBuffer(buffer.clone()),
             DefaultAction::NewPane => Message::Open(buffer.clone()),
             DefaultAction::ReplacePane => match focus {
                 Some(pane) => Message::Replace(buffer.clone(), pane),

@@ -261,17 +261,17 @@ impl Dashboard {
                 let event = self.side_menu.update(message);
 
                 match event {
-                    sidebar::Event::Open(kind) => {
-                        if !config.pane_toggling {
-                             return (self.open_buffer(kind, config), None);
-                        }
-
+                    sidebar::Event::ToggleBuffer(kind) => {
                         for (id, pane) in self.panes.clone().iter() {
                             if pane.buffer.data().as_ref() == Some(&kind) {
                                 return (self.close_pane(*id), None);
                             }
                         }
+                        
+                        return (self.open_buffer(kind, config), None);
 
+                    }
+                    sidebar::Event::Open(kind) => {
                         return (self.open_buffer(kind, config), None);
                     }
                     sidebar::Event::Replace(kind, pane) => {
