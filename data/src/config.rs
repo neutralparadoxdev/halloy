@@ -46,6 +46,7 @@ pub struct Config {
     pub notifications: Notifications<Sound>,
     pub file_transfer: FileTransfer,
     pub tooltips: bool,
+    pub pane_toggling: bool,
 }
 
 #[derive(Debug, Clone, Copy, Deserialize)]
@@ -151,6 +152,8 @@ impl Config {
             pub file_transfer: FileTransfer,
             #[serde(default = "default_tooltip")]
             pub tooltips: bool,
+            #[serde(default = "default_pane_toggling")]
+            pub pane_toggling: bool
         }
 
         let path = Self::path();
@@ -168,6 +171,7 @@ impl Config {
             notifications,
             file_transfer,
             tooltips,
+            pane_toggling,
         } = toml::from_str(content.as_ref()).map_err(|e| Error::Parse(e.to_string()))?;
 
         servers.read_password_files()?;
@@ -188,6 +192,7 @@ impl Config {
             notifications: loaded_notifications,
             file_transfer,
             tooltips,
+            pane_toggling,
         })
     }
 
@@ -295,6 +300,10 @@ pub fn has_yaml_config() -> bool {
 
 fn default_tooltip() -> bool {
     true
+}
+
+fn default_pane_toggling() -> bool {
+    false
 }
 
 #[derive(Debug, Error, Clone)]
