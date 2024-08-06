@@ -261,16 +261,6 @@ impl Dashboard {
                 let event = self.side_menu.update(message);
 
                 match event {
-                    sidebar::Event::ToggleBuffer(kind) => {
-                        for (id, pane) in self.panes.clone().iter() {
-                            if pane.buffer.data().as_ref() == Some(&kind) {
-                                return (self.close_pane(*id), None);
-                            }
-                        }
-                        
-                        return (self.open_buffer(kind, config), None);
-
-                    }
                     sidebar::Event::Open(kind) => {
                         return (self.open_buffer(kind, config), None);
                     }
@@ -286,7 +276,11 @@ impl Dashboard {
                         }
                     }
                     sidebar::Event::Close(pane) => {
-                        self.panes.close(pane);
+                        if self.panes.close(pane).is_none() {
+                            if let Some(state) = self.panes.get_mut(pane) {
+                                state.buffer = Buffer::Empty;
+                            }
+                        }
                         self.last_changed = Some(Instant::now());
 
                         if self.focus == Some(pane) {
